@@ -42,8 +42,10 @@ public class MoonMap extends JComponent {
     		if (c != null) {
     			Graphics2D g2 = (Graphics2D) g;
     			Ellipse2D.Double o = new Ellipse2D.Double(c.latitude - (diameter/2), c.longitude - (diameter/2), diameter, diameter);
+    			g2.setPaint(Color.RED);
     	        g2.draw(o);
     	        g2.fill(o);
+    	        g2.setPaint(Color.BLACK);
     	        // c = null;
     	        System.out.println("Circle repaint");
     		}

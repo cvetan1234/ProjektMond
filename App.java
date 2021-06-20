@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JTextArea;
 
 public class App {
@@ -37,16 +38,24 @@ public class App {
         
 		//Original Image Dimension: 1475x647
 		
-        JTextArea areaLatitude = new JTextArea("ширина?");
-        areaLatitude.setBounds(30, 668, 100, 30);
+	    JLabel latitudeL = new JLabel("Ширина:");
+	    latitudeL.setBounds(30, 668, 100, 30);
+	    latitudeL.setFont(latitudeL.getFont().deriveFont(18f));
+	    
+	    JLabel longitudeL = new JLabel("Дължина:");
+	    longitudeL.setBounds(30, 708, 100, 30);
+	    longitudeL.setFont(longitudeL.getFont().deriveFont(18f));
+	    
+        JTextArea areaLatitude = new JTextArea("");
+        areaLatitude.setBounds(140, 668, 100, 30);
         areaLatitude.setFont(areaLatitude.getFont().deriveFont(18f));
         
-        JTextArea areaLongitude = new JTextArea("дължина?");
-        areaLongitude.setBounds(30, 708, 100, 30);
+        JTextArea areaLongitude = new JTextArea("");
+        areaLongitude.setBounds(140, 708, 100, 30);
         areaLongitude.setFont(areaLongitude.getFont().deriveFont(18f));
         
-		JButton goToCoordinates = new JButton("Go to coordinates"); //creating instance of JButton
-		goToCoordinates.setBounds(150, 668, 200, 70); 
+		JButton goToCoordinates = new JButton("Show on the map"); //creating instance of JButton
+		goToCoordinates.setBounds(270, 668, 200, 70); 
 		// goToCoordinates.setBackground(new Color(0,153,0));
 		goToCoordinates.setFont(new Font("Arial", Font.ITALIC, 15));
 		goToCoordinates.addActionListener(new ActionListener() {
@@ -60,7 +69,7 @@ public class App {
 		});
 		
 		JButton clear = new JButton("Clear"); //creating instance of JButton
-		clear.setBounds(370, 668, 200, 70); 
+		clear.setBounds(490, 668, 200, 70); 
 		// goToCoordinates.setBackground(new Color(0,153,0));
 		clear.setFont(new Font("Arial", Font.ITALIC, 15));
 		clear.addActionListener(new ActionListener() {
@@ -69,10 +78,13 @@ public class App {
 			}
 		});
 		
+		f.add(latitudeL);
+		f.add(longitudeL);
 		f.add(goToCoordinates);
 		f.add(clear);
 		f.add(areaLatitude);
 		f.add(areaLongitude);
+		
 		
 		//System.out.println("Test 5");
         f.setVisible(true);
