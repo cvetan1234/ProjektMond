@@ -1,15 +1,17 @@
-package graphics;
+package main;
 
 import java.awt.Font;
-import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.ListIterator;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -18,15 +20,14 @@ import javax.swing.JTextArea;
 public class App {
 	
 	public static void main(String[] args) {
+		ArrayList <Coordinates> coordinatesList = new ArrayList<Coordinates>(); 
+		
 		JFrame f = new JFrame();   // creates a JFrame
-        f.setTitle("Example1234");     //sets the title
+        f.setTitle("Moon Map");     //sets the title
         //f.setSize(1600, 1000);   //sets the size
         f.setExtendedState(JFrame.MAXIMIZED_BOTH);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // sets the default close operation
        
-        // GridBagLayout layout = new GridBagLayout();
-        // GridBagConstraints c = new GridBagConstraints();
-        
         f.setLayout(null); // using no layout managers
 		//System.out.println("Test 1");
         
@@ -65,16 +66,24 @@ public class App {
 		showOnTheMap.setFont(new Font("Arial", Font.ITALIC, 15));
 		showOnTheMap.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){ 
-				System.out.println(areaLongitude.getText());
+				//System.out.println(areaLongitude.getText());
 				if (areaLongitude.getText().isEmpty() || areaLatitude.getText().isEmpty()) {
 					JOptionPane.showMessageDialog(f, "Coordinate/s are not selected!"); 
 					return;
 				}
-				Double coordLatitude = Double.parseDouble(areaLatitude.getText());
-				Double coordLongitude = Double.parseDouble(areaLongitude.getText());
-				//System.out.println(longitude + " " + latitude);
-				Coordinates c = moonmap.findCoordinates(coordLatitude, coordLongitude);
-				moonmap.setCoordinates(c);
+				try {
+					Double latitude = validateLatitude(areaLatitude.getText());
+					Double longitude = validateLongitude(areaLongitude.getText());
+					Coordinates c = new Coordinates (latitude, longitude);
+					moonmap.setCoordinates(c);
+					coordinatesList.add(c);
+				} catch (InvalidDataException d){
+					d.printStackTrace();
+					moonmap.setCoordinates(null);
+					areaLatitude.setText("");
+					areaLongitude.setText("");
+					JOptionPane.showMessageDialog(f, "Invalid data");
+				}
 			}
 		});
 		
@@ -87,6 +96,17 @@ public class App {
 				moonmap.setCoordinates(null);
 				areaLatitude.setText("");
 				areaLongitude.setText("");
+			}
+		});
+		
+		JButton save = new JButton("Save"); //creating instance of JButton
+		save.setBounds(710, 668, 200, 70); 
+		// goToCoordinates.setBackground(new Color(0,153,0));
+		save.setFont(new Font("Arial", Font.ITALIC, 15));
+		save.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e){ 
+				saveToFile(coordinatesList);
+				coordinatesList.clear();
 			}
 		});
 		
@@ -109,7 +129,7 @@ public class App {
 		
 		JCheckBox grid = new JCheckBox("Grid");
 		grid.setSelected(true);
-		grid.setBounds(710, 668, 200, 70);
+		grid.setBounds(930, 668, 200, 70);
 		grid.addItemListener(new ItemListener() {    
             public void itemStateChanged(ItemEvent e) { 
             	if (e.getStateChange()==1) {
@@ -127,6 +147,7 @@ public class App {
 		f.add(areaLongitude);
 		f.add(showOnTheMap);
 		f.add(clear);
+		f.add(save);
 		//f.add(showDetails);
 		f.add(grid);
 		
@@ -137,5 +158,50 @@ public class App {
         //System.out.println("Test 6");
 		
 	}
-
+	
+	private static void saveToFile(ArrayList list) {
+		try {
+			FileWriter myWriter = new FileWriter("Coordinates.txt");
+			ListIterator <Coordinates> i = list.listIterator();
+		    while (i.hasNext()) {
+		    	Coordinates c = (Coordinates) i.next();
+		    	myWriter.write("Latitude: " + c.getLatitude() + " Longitude: " + c.getLongitude() + "\n");
+		    }
+		    myWriter.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static Double validateLatitude(String data) throws InvalidDataException {
+		Double value;
+		
+		try {
+			value = Double.parseDouble(data);
+		} catch (NumberFormatException e) {
+			throw new InvalidDataException(data);
+		}
+		
+		if (value > 90 || value < -90) {
+			throw new InvalidDataException(data);
+		}
+		
+		return value;
+	}
+	
+	private static Double validateLongitude(String data) throws InvalidDataException {
+		Double value;
+		
+		try {
+			value = Double.parseDouble(data);
+		} catch (NumberFormatException e) {
+			throw new InvalidDataException(data);
+		}
+		
+		if (value > 180 || value < -180) {
+			throw new InvalidDataException(data);
+		}
+		
+		return value;
+	}
 }
