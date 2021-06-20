@@ -4,10 +4,15 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
 public class App {
@@ -38,13 +43,13 @@ public class App {
         
 		//Original Image Dimension: 1475x647
 		
-	    JLabel latitudeL = new JLabel("Ширина:");
-	    latitudeL.setBounds(30, 668, 100, 30);
-	    latitudeL.setFont(latitudeL.getFont().deriveFont(18f));
+	    JLabel labelLatitude = new JLabel("Ширина:");
+	    labelLatitude.setBounds(30, 668, 100, 30);
+	    labelLatitude.setFont(labelLatitude.getFont().deriveFont(18f));
 	    
-	    JLabel longitudeL = new JLabel("Дължина:");
-	    longitudeL.setBounds(30, 708, 100, 30);
-	    longitudeL.setFont(longitudeL.getFont().deriveFont(18f));
+	    JLabel labelLongitude = new JLabel("Дължина:");
+	    labelLongitude.setBounds(30, 708, 100, 30);
+	    labelLongitude.setFont(labelLongitude.getFont().deriveFont(18f));
 	    
         JTextArea areaLatitude = new JTextArea("");
         areaLatitude.setBounds(140, 668, 100, 30);
@@ -54,16 +59,21 @@ public class App {
         areaLongitude.setBounds(140, 708, 100, 30);
         areaLongitude.setFont(areaLongitude.getFont().deriveFont(18f));
         
-		JButton goToCoordinates = new JButton("Show on the map"); //creating instance of JButton
-		goToCoordinates.setBounds(270, 668, 200, 70); 
+		JButton showOnTheMap = new JButton("Show on the map"); //creating instance of JButton
+		showOnTheMap.setBounds(270, 668, 200, 70); 
 		// goToCoordinates.setBackground(new Color(0,153,0));
-		goToCoordinates.setFont(new Font("Arial", Font.ITALIC, 15));
-		goToCoordinates.addActionListener(new ActionListener() {
+		showOnTheMap.setFont(new Font("Arial", Font.ITALIC, 15));
+		showOnTheMap.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){ 
+				System.out.println(areaLongitude.getText());
+				if (areaLongitude.getText().isEmpty() || areaLatitude.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(f, "Coordinate/s are not selected!"); 
+					return;
+				}
 				Double coordLatitude = Double.parseDouble(areaLatitude.getText());
 				Double coordLongitude = Double.parseDouble(areaLongitude.getText());
 				//System.out.println(longitude + " " + latitude);
-				Coordinates c = findCoordinatesM(coordLatitude, coordLongitude);
+				Coordinates c = moonmap.findCoordinates(coordLatitude, coordLongitude);
 				moonmap.setCoordinates(c);
 			}
 		});
@@ -75,15 +85,50 @@ public class App {
 		clear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){ 
 				moonmap.setCoordinates(null);
+				areaLatitude.setText("");
+				areaLongitude.setText("");
 			}
 		});
 		
-		f.add(latitudeL);
-		f.add(longitudeL);
-		f.add(goToCoordinates);
-		f.add(clear);
+		/*JButton showDetails = new JButton("Show detailed map"); //creating instance of JButton
+		showDetails.setBounds(710, 668, 200, 70); 
+		// goToCoordinates.setBackground(new Color(0,153,0));
+		showDetails.setFont(new Font("Arial", Font.ITALIC, 15));
+		showDetails.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e){ 
+				if(!moonmap.areCoordinatesSelected()) {
+					JOptionPane.showMessageDialog(f, "Point is not selected on the map!");
+				} else {
+					System.out.println("ASKJJKAS");
+					CropImage dialog = new CropImage(f, moonmap.getCoordinates());
+					dialog.setVisible(true);
+				}
+			}
+		});
+		*/
+		
+		JCheckBox grid = new JCheckBox("Grid");
+		grid.setSelected(true);
+		grid.setBounds(710, 668, 200, 70);
+		grid.addItemListener(new ItemListener() {    
+            public void itemStateChanged(ItemEvent e) { 
+            	if (e.getStateChange()==1) {
+            		moonmap.setGridCheck(true);
+            	} else {
+            		moonmap.setGridCheck(false);
+            	}
+            }    
+        });    
+		
+		
+		f.add(labelLatitude);
+		f.add(labelLongitude);
 		f.add(areaLatitude);
 		f.add(areaLongitude);
+		f.add(showOnTheMap);
+		f.add(clear);
+		//f.add(showDetails);
+		f.add(grid);
 		
 		
 		//System.out.println("Test 5");
@@ -92,14 +137,5 @@ public class App {
         //System.out.println("Test 6");
 		
 	}
-	
-	public static Coordinates findCoordinatesM (double kolkoNaSever, double kolkoNaIztok) {  
-    	Double latitude = Double.valueOf(737.28 + kolkoNaIztok*4.096);
-    	Double longitude = Double.valueOf(323.1 - kolkoNaSever*3.59);
-    	return new Coordinates (latitude, longitude);
-    	//Ellipse2D.Double o = new Ellipse2D.Double(Y - (d/2), X - (d/2), d, d);
-        //g.draw(o);
-        //g.fill(o);
-    }
 
 }
