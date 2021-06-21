@@ -15,8 +15,8 @@ public class Coordinates {
 	Coordinates(Double latitude, Double longitude) {
 		this.latitude = latitude;
 		this.longitude = longitude;
-		xCoordinate = Double.valueOf(737.28 + longitude*4.096);
-    	yCoordinate = Double.valueOf(323.1 - latitude*3.59);
+		xCoordinate = Double.valueOf(737.28 + longitude*4.096); // coordinate from longitude to JFrame coordinate
+    	yCoordinate = Double.valueOf(323.1 - latitude*3.59); // coordinate from latitude to JFrame coordinate
 	}
 	
 	public Double getLatitude() {
