@@ -8,6 +8,7 @@ import java.awt.Image;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.util.ArrayList;
 
 import javax.swing.*;  
 import resources.ResourceLoader;
@@ -17,6 +18,8 @@ public class MoonMap extends JComponent {
 	private Coordinates c;
 	private int diameter = 10;
 	private boolean gridCheck = true;
+	ArrayList <Ellipse2D> listOfEllipses = new ArrayList<Ellipse2D>(); 
+	boolean printAllEllipses = false;
 	
 	public void paintComponent(Graphics g) {    	
 		super.paintComponent(g);
@@ -30,11 +33,21 @@ public class MoonMap extends JComponent {
 		if (c != null) { // if c is not empty draw the point with the fields of c as coordinates
 			Graphics2D g2 = (Graphics2D) g;
 			Ellipse2D.Double o = new Ellipse2D.Double(c.getXCoordinate() - (diameter/2), c.getYCoordinate() - (diameter/2), diameter, diameter);
+			listOfEllipses.add(o);
 			g2.setPaint(Color.RED);
 			g2.draw(o);
 			g2.fill(o);
 			g2.setPaint(Color.BLACK);
 			//System.out.println("Circle repaint");
+		}
+		if (printAllEllipses) {
+			Graphics2D g2 = (Graphics2D) g;
+			for (int n = 0; n < listOfEllipses.size(); n ++) {
+				g2.setPaint(Color.RED);
+				g2.draw(listOfEllipses.get(n));
+				g2.fill(listOfEllipses.get(n));
+				g2.setPaint(Color.BLACK);
+			}
 		}
 		repaint();
     }

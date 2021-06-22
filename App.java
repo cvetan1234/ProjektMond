@@ -1,10 +1,12 @@
 package main;
 
+import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,9 +21,15 @@ import javax.swing.JTextArea;
 
 public class App {
 	
+	static FileWriter myWriter;
+	
 	public static void main(String[] args) {
 		ArrayList <Coordinates> coordinatesList = new ArrayList<Coordinates>(); // ArrayList to store the coordinates
-		
+		try {
+			myWriter = new FileWriter("Coordinates.txt");
+		} catch (IOException e){
+			e.printStackTrace();
+		}
 		JFrame f = new JFrame();   // creates a JFrame
         f.setTitle("Moon Map");     //sets the title
         //f.setSize(1600, 1000);   //sets the size
@@ -34,24 +42,24 @@ public class App {
 		moonmap.setBounds(30, 1, 1475, 647); // setting the position and size of MoonMap object (image)
 	    f.add(moonmap);    //adds the paint method onto the JFrame
 		
-	    JLabel labelLatitude = new JLabel("Ширина:"); // creating instance of JLabel
-	    labelLatitude.setBounds(30, 668, 100, 30); // setting labels position and size
+	    JLabel labelLatitude = new JLabel("Ширина (от -90 до 90):"); // creating instance of JLabel
+	    labelLatitude.setBounds(30, 668, 250, 30); // setting labels position and size
 	    labelLatitude.setFont(labelLatitude.getFont().deriveFont(18f));
 	    
-	    JLabel labelLongitude = new JLabel("Дължина:"); // creating instance of JLabel
-	    labelLongitude.setBounds(30, 708, 100, 30); // setting labels position and size
+	    JLabel labelLongitude = new JLabel("Дължина (от -180 до 180):"); // creating instance of JLabel
+	    labelLongitude.setBounds(30, 708, 250, 30); // setting labels position and size
 	    labelLongitude.setFont(labelLongitude.getFont().deriveFont(18f));
 	    
         JTextArea areaLatitude = new JTextArea(""); // creating instance of JTextArea
-        areaLatitude.setBounds(140, 668, 100, 30); // setting areas position and size
+        areaLatitude.setBounds(280, 668, 100, 30); // setting areas position and size
         areaLatitude.setFont(areaLatitude.getFont().deriveFont(18f)); 
         
         JTextArea areaLongitude = new JTextArea(""); // creating instance of JTextArea
-        areaLongitude.setBounds(140, 708, 100, 30); // setting areas position and size
+        areaLongitude.setBounds(280, 708, 100, 30); // setting areas position and size
         areaLongitude.setFont(areaLongitude.getFont().deriveFont(18f));
         
 		JButton showOnTheMap = new JButton("Show on the map"); //creating instance of JButton
-		showOnTheMap.setBounds(270, 668, 200, 70); // setting buttons position and size
+		showOnTheMap.setBounds(410, 668, 200, 70); // setting buttons position and size
 		// goToCoordinates.setBackground(new Color(0,153,0));
 		showOnTheMap.setFont(new Font("Arial", Font.ITALIC, 15));
 		showOnTheMap.addActionListener(new ActionListener() {
@@ -78,7 +86,7 @@ public class App {
 		});
 		
 		JButton clear = new JButton("Clear"); //creating instance of JButton
-		clear.setBounds(490, 668, 200, 70); // setting buttons position and size
+		clear.setBounds(630, 668, 200, 70); // setting buttons position and size
 		// goToCoordinates.setBackground(new Color(0,153,0));
 		clear.setFont(new Font("Arial", Font.ITALIC, 15));
 		clear.addActionListener(new ActionListener() {
@@ -90,7 +98,7 @@ public class App {
 		});
 		
 		JButton save = new JButton("Save"); //creating instance of JButton
-		save.setBounds(710, 668, 200, 70);  // setting buttons position and size
+		save.setBounds(850, 668, 200, 70);  // setting buttons position and size
 		// goToCoordinates.setBackground(new Color(0,153,0));
 		save.setFont(new Font("Arial", Font.ITALIC, 15));
 		save.addActionListener(new ActionListener() {
@@ -100,26 +108,47 @@ public class App {
 			}
 		});
 		
-		/*JButton showDetails = new JButton("Show detailed map"); //creating instance of JButton
-		showDetails.setBounds(710, 668, 200, 70); 
+		JButton open = new JButton("Open"); //creating instance of JButton
+		open.setBounds(1070, 668, 200, 70); 
 		// goToCoordinates.setBackground(new Color(0,153,0));
-		showDetails.setFont(new Font("Arial", Font.ITALIC, 15));
-		showDetails.addActionListener(new ActionListener() {
+		open.setFont(new Font("Arial", Font.ITALIC, 15));
+		open.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){ 
-				if(!moonmap.areCoordinatesSelected()) {
-					JOptionPane.showMessageDialog(f, "Point is not selected on the map!");
-				} else {
-					System.out.println("ASKJJKAS");
-					CropImage dialog = new CropImage(f, moonmap.getCoordinates());
-					dialog.setVisible(true);
-				}
+				File file = new File("Coordinates.txt");
+		        
+		        //first check if Desktop is supported by Platform or not
+		        if(!Desktop.isDesktopSupported()){
+		            System.out.println("Desktop is not supported");
+		            return;
+		        }
+		        
+		        Desktop desktop = Desktop.getDesktop();
+		        if(file.exists()) {
+		        	try{
+		        		desktop.open(file);
+		        	} catch (IOException k) {
+		        		k.printStackTrace();
+		        	}
+		        }
 			}
 		});
-		*/
+		
+		JCheckBox seeAllC = new JCheckBox("Show all coordinates");
+		seeAllC.setSelected(false);
+		seeAllC.setBounds(1290, 660, 200, 30);
+		seeAllC.addItemListener(new ItemListener() {    
+            public void itemStateChanged(ItemEvent e) { 
+            	if (e.getStateChange()==1) {
+            		moonmap.printAllEllipses = true;
+            	} else {
+            		moonmap.printAllEllipses = false;
+            	}
+            }    
+        });  
 		
 		JCheckBox grid = new JCheckBox("Grid"); // creating instance of JCheckBox 
 		grid.setSelected(true); // stay selected
-		grid.setBounds(930, 668, 200, 70); // setting checkboxes position and size
+		grid.setBounds(1290, 700, 200, 30); // setting checkboxes position and size
 		grid.addItemListener(new ItemListener() {    
             public void itemStateChanged(ItemEvent e) { 
             	if (e.getStateChange()==1) {
@@ -138,7 +167,9 @@ public class App {
 		f.add(showOnTheMap);
 		f.add(clear);
 		f.add(save);
+		f.add(open);
 		//f.add(showDetails);
+		f.add(seeAllC);
 		f.add(grid);
 	
         f.setVisible(true); // set the frame visible
@@ -147,13 +178,13 @@ public class App {
 	
 	private static void saveToFile(ArrayList list) {
 		try {
-			FileWriter myWriter = new FileWriter("Coordinates.txt"); // create the file "Coordinates.txt"
 			ListIterator <Coordinates> i = list.listIterator();
 		    while (i.hasNext()) {
 		    	Coordinates c = (Coordinates) i.next();
-		    	myWriter.write("Latitude: " + c.getLatitude() + " Longitude: " + c.getLongitude() + "\n"); // Write the latitude and longitude fields of each coordinates object in the list
+		    	myWriter.write("Latitude: " + c.getLatitude() + " Longitude: " + c.getLongitude() + "\n");
 		    }
-		    myWriter.close();
+		    myWriter.flush();
+		    //myWriter.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
