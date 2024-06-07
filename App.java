@@ -42,11 +42,11 @@ public class App {
 		moonmap.setBounds(30, 1, 1475, 647); // setting the position and size of MoonMap object (image)
 	    f.add(moonmap);    //adds the paint method onto the JFrame
 		
-	    JLabel labelLatitude = new JLabel("Ширина (от -90 до 90):"); // creating instance of JLabel
+	    JLabel labelLatitude = new JLabel("Latitude (-90 to 90):"); // creating instance of JLabel
 	    labelLatitude.setBounds(30, 668, 250, 30); // setting labels position and size
 	    labelLatitude.setFont(labelLatitude.getFont().deriveFont(18f));
 	    
-	    JLabel labelLongitude = new JLabel("Дължина (от -180 до 180):"); // creating instance of JLabel
+	    JLabel labelLongitude = new JLabel("Longitude (-180 to 180):"); // creating instance of JLabel
 	    labelLongitude.setBounds(30, 708, 250, 30); // setting labels position and size
 	    labelLongitude.setFont(labelLongitude.getFont().deriveFont(18f));
 	    
